@@ -24,7 +24,7 @@ jobs:
             - run: yarn install --no-immutable
             - run: yarn build
             - name: Set CI version
-              run: node -e "const fs=require('fs');const pkg=require('./package.json');const base=pkg.version.replace(/-milli\\.\\d+$/, '');const run=process.env.GITHUB_RUN_NUMBER;pkg.version=`${base}-milli.${run}`;fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+              run: node -e "const fs=require('fs');const pkg=require('./package.json');const base=pkg.version.replace(/-milli\\.\\d+$/, '');const run=process.env.GITHUB_RUN_NUMBER || '0';pkg.version=base + '-milli.' + run;fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
             - run: npm publish --access public
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
