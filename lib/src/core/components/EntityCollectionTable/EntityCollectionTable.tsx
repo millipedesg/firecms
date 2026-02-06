@@ -692,7 +692,7 @@ function createFilterField({
         const filterProperty = baseProperty.properties
             ? getResolvedPropertyInPath(baseProperty.properties, mapFilterKey)
             : undefined;
-        const enumValues = filterProperty?.enumValues
+        const enumValues = filterProperty && (filterProperty.dataType === "string" || filterProperty.dataType === "number") && filterProperty.enumValues
             ? resolveEnumValues(filterProperty.enumValues)
             : (baseProperty.filterEnumValues ? resolveEnumValues(baseProperty.filterEnumValues) : undefined);
         const filterDataType = filterProperty?.dataType ?? baseProperty.filterDataType ?? (enumValues ? "string" : undefined);
