@@ -11,7 +11,7 @@
     "@mui/material": "^5.13.4",
     "algoliasearch": "^4.17.1",
     "firebase": "^10.4.0",
-    "firecms": "workspace:lib",
+    "@millipedesg/firecms": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.12.0",

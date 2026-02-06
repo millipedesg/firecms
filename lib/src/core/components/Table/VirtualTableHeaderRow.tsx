@@ -113,10 +113,10 @@ export const VirtualTableHeaderRow = ({
         })}>
             {columns.map((c, columnIndex) => {
                 const column = columns[columnIndex];
-
+                const filterKey = column.filterKey ?? column.key;
                 const filterForThisProperty: [TableWhereFilterOp, any] | undefined =
-                    column && filter && filter[column.key]
-                        ? filter[column.key]
+                    column && filter && filter[filterKey]
+                        ? filter[filterKey]
                         : undefined;
                 return <ErrorBoundary key={"header_" + column.key}>
                     <VirtualTableHeader

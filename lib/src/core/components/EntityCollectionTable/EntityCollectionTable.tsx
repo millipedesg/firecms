@@ -400,6 +400,7 @@ export const EntityCollectionTable = React.memo<EntityCollectionTableProps<any>>
                         if (!property)
                             throw Error("Internal error: no property found in path " + key);
                         const filterable = filterableProperty(property);
+                        const filterKey = resolveFilterKey(property, key);
                         return ({
                             key: key as string,
                             align: getCellAlignment(property),
@@ -407,6 +408,7 @@ export const EntityCollectionTable = React.memo<EntityCollectionTableProps<any>>
                             title: property.name ?? key as string,
                             sortable: forceFilter ? Object.keys(forceFilter).includes(key) : true,
                             filter: !disabledFilterChange && filterable,
+                            filterKey,
                             width: getPropertyColumnWidth(property),
                             resizable: true,
                             custom: property
@@ -681,7 +683,43 @@ function createFilterField({
     if (!baseProperty) {
         return null;
     }
-    if (baseProperty.dataType === "reference") {
+    if (baseProperty.dataType === "map") {
+        const mapFilterKey = baseProperty.filterKey;
+        if (!mapFilterKey) {
+            return null;
+        }
+
+        const filterProperty = baseProperty.properties
+            ? getResolvedPropertyInPath(baseProperty.properties, mapFilterKey)
+            : undefined;
+        const enumValues = filterProperty?.enumValues
+            ? resolveEnumValues(filterProperty.enumValues)
+            : (baseProperty.filterEnumValues ? resolveEnumValues(baseProperty.filterEnumValues) : undefined);
+        const filterDataType = filterProperty?.dataType ?? baseProperty.filterDataType ?? (enumValues ? "string" : undefined);
+        const title = filterProperty?.name ?? baseProperty.name;
+
+        if (filterDataType === "string" || filterDataType === "number") {
+            return <StringNumberFilterField value={filterValue}
+                                            setValue={setFilterValue}
+                                            name={id as string}
+                                            dataType={filterDataType}
+                                            isArray={false}
+                                            enumValues={enumValues}
+                                            title={title}/>;
+        } else if (filterDataType === "boolean") {
+            return <BooleanFilterField value={filterValue}
+                                       setValue={setFilterValue}
+                                       name={id as string}
+                                       title={title}/>;
+        } else if (filterDataType === "date") {
+            return <DateTimeFilterField value={filterValue}
+                                        setValue={setFilterValue}
+                                        name={id as string}
+                                        mode={filterProperty && filterProperty.dataType === "date" ? filterProperty.mode : undefined}
+                                        isArray={false}
+                                        title={title}/>;
+        }
+    } else if (baseProperty.dataType === "reference") {
         return <ReferenceFilterField value={filterValue}
                                      setValue={setFilterValue}
                                      name={id as string}
@@ -727,6 +765,9 @@ function filterableProperty(property: ResolvedProperty, partOfArray = false): bo
     if (partOfArray) {
         return ["string", "number", "date", "reference"].includes(property.dataType);
     }
+    if (property.dataType === "map") {
+        return Boolean(property.filterKey);
+    }
     if (property.dataType === "array") {
         if (property.of)
             return filterableProperty(property.of, true);
@@ -734,6 +775,16 @@ function filterableProperty(property: ResolvedProperty, partOfArray = false): bo
             return false;
     }
     return ["string", "number", "boolean", "date", "reference", "array"].includes(property.dataType);
+}
+
+function resolveFilterKey(property: ResolvedProperty, key: string): string | undefined {
+    if (property.dataType !== "map" || !property.filterKey) {
+        return undefined;
+    }
+    if (property.filterKey.startsWith(`${key}.`)) {
+        return property.filterKey;
+    }
+    return `${key}.${property.filterKey}`;
 }
 
 function getColumnKeysForProperty(property: ResolvedProperty, key: string): string[] {

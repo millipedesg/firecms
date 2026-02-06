@@ -1,36 +1,30 @@
-name: Node.js Package
+name: Publish GitHub Packages
 on:
     push:
-        branches: [ release ]
+        branches: [ main ]
+
+permissions:
+    contents: read
+    packages: write
 
 defaults:
     run:
         working-directory: ./lib
 
 jobs:
-    build:
+    publish:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-            # Setup .npmrc file to publish to npm
-            - uses: actions/setup-node@v3
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
               with:
-                  node-version: '16.x'
-                  registry-url: 'https://registry.npmjs.org'
+                  node-version: '20.x'
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@millipedesg'
             - run: yarn install --no-immutable
-            # Publish to npm
+            - run: yarn build
+            - name: Set CI version
+              run: node -e "const fs=require('fs');const pkg=require('./package.json');const base=pkg.version.replace(/-milli\\.\\d+$/, '');const run=process.env.GITHUB_RUN_NUMBER;pkg.version=`${base}-milli.${run}`;fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
             - run: npm publish --access public
               env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-#            # Setup .npmrc file to publish to GitHub Packages
-#            - uses: actions/setup-node@v2
-#              with:
-#                  node-version: '16.x'
-#                  registry-url: 'https://npm.pkg.github.com'
-#                  scope: '@Camberi'
-#            # Publish to GitHub Packages
-#            - run: npm publish
-#              env:
-#                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            # Create Git version tag
-            - run: npm run createTag
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

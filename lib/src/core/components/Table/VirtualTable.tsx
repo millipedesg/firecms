@@ -204,16 +204,17 @@ export const VirtualTable = React.memo<VirtualTableProps<any>>(
             endReachCallbackThreshold.current = 0;
             const filter = filterRef.current;
             let newFilterValue: TableFilterValues<any> = filter ? { ...filter } : {};
+            const filterKey = column.filterKey ?? column.key;
 
             if (!filterForProperty) {
-                delete newFilterValue[column.key];
+                delete newFilterValue[filterKey];
             } else {
-                newFilterValue[column.key] = filterForProperty;
+                newFilterValue[filterKey] = filterForProperty;
             }
             const newSortBy: [string, "asc" | "desc"] | undefined = sortByProperty && currentSort ? [sortByProperty, currentSort] : undefined;
             const isNewFilterCombinationValid = !checkFilterCombination || checkFilterCombination(newFilterValue, newSortBy);
             if (!isNewFilterCombinationValid) {
-                newFilterValue = filterForProperty ? { [column.key]: filterForProperty } as TableFilterValues<Extract<keyof T, string>> : {};
+                newFilterValue = filterForProperty ? { [filterKey]: filterForProperty } as TableFilterValues<Extract<keyof T, string>> : {};
             }
 
             if (onFilterUpdate) onFilterUpdate(newFilterValue);

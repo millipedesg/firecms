@@ -149,6 +149,12 @@ export interface TableColumn<CustomProps extends any = any> {
     key: string;
 
     /**
+     * Optional key used for filtering (e.g. a nested field path).
+     * If not set, `key` is used.
+     */
+    filterKey?: string;
+
+    /**
      * The width of the column, gutter width is not included
      */
     width: number;

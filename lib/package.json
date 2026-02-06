@@ -1,13 +1,13 @@
 {
-    "name": "firecms",
-    "version": "2.2.0-pre",
+    "name": "@millipedesg/firecms",
+    "version": "2.2.0-milli.0",
     "description": "Awesome Firebase/Firestore-based headless open-source CMS",
     "funding": {
         "url": "https://github.com/sponsors/firecmsco"
     },
     "author": "FireCMS",
     "license": "MIT",
-    "repository": "git@github.com:FireCMSco/firecms.git",
+    "repository": "git@github.com:millipedesg/firecms.git",
     "main": "./dist/index.umd.js",
     "module": "./dist/index.es.js",
     "types": "./dist/index.d.ts",

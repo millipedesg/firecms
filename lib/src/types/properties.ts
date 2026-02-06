@@ -475,6 +475,24 @@ export interface MapProperty<T extends Record<string, CMSType> = Record<string, 
     dataType: "map";
 
     /**
+     * Optional nested field within this map to use for filtering.
+     * The filter key is resolved as `${propertyKey}.${filterKey}`.
+     */
+    filterKey?: string;
+
+    /**
+     * Data type used by the filter UI when `filterKey` does not point
+     * to a defined child property.
+     */
+    filterDataType?: "string" | "number" | "boolean" | "date";
+
+    /**
+     * Enum values used by the filter UI when `filterKey` does not point
+     * to a defined child property.
+     */
+    filterEnumValues?: EnumValues;
+
+    /**
      * Record of properties included in this map.
      */
     properties?: PropertiesOrBuilders<T>;
