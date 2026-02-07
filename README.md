@@ -31,6 +31,59 @@ existing ones.
 FireCMS does **not impose any data structure** restrictions, ensuring a smooth,
 out-of-the-box experience for any project.
 
+## Millipede fork (v2)
+
+This fork publishes a scoped package with additional map filter support.
+
+- Package: `@millipedesg/firecms`
+- Publish branch: `v2-millipede`
+- Registry: GitHub Packages
+
+To install:
+
+1) Add GitHub Packages auth (token needs `read:packages`):
+```
+@millipedesg:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
+```
+
+2) Install:
+```
+npm install @millipedesg/firecms
+```
+
+## Map filters with enums
+
+This fork adds map filtering via a nested filter key, useful when your data
+stores objects like `organization` with `id` and `name`.
+
+Example configuration:
+```
+organization: {
+  name: "Organization",
+  dataType: "map",
+  filterKey: "id",
+  filterDataType: "string",
+  filterEnumValues: {
+    "org_1": "Acme Construction",
+    "org_2": "Mason Co"
+  },
+  properties: {
+    name: {
+      name: "Organization Name",
+      dataType: "string"
+    }
+  }
+}
+```
+
+Notes:
+- `filterKey` points to the nested field in the map (filter uses
+  `organization.id` in Firestore queries).
+- `filterEnumValues` provides UI labels while storing/filtering by the enum key.
+- If `filterKey` matches a defined child property, the filter UI will infer
+  enum values and data type automatically from that child.
+
 ### Core technologies
 
 FireCMS is based on this great technologies:
