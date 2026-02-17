@@ -697,37 +697,10 @@ function createFilterField({
             : (baseProperty.filterEnumValues ? resolveEnumValues(baseProperty.filterEnumValues) : undefined);
         const filterDataType = filterProperty?.dataType ?? baseProperty.filterDataType ?? (enumValues ? "string" : undefined);
         const title = filterProperty?.name ?? baseProperty.name;
-        const enumValueById: Record<string, string | number> = enumValues
-            ? enumValues.reduce((acc, enumValue) => {
-                acc[String(enumValue.id)] = enumValue.label;
-                return acc;
-            }, {} as Record<string, string | number>)
-            : {};
-        const mapArrayValueFactory = (selectedId: any) => {
-            const selectedKey = String(selectedId);
-            const selectedLabel = enumValueById[selectedKey];
-            return selectedLabel !== undefined
-                ? { id: selectedId, name: selectedLabel }
-                : { id: selectedId };
-        };
-        const setMapFilterValue = (newValue?: [TableWhereFilterOp, any]) => {
-            if (!isArray || mapFilterKey !== "id" || !newValue) {
-                setFilterValue(newValue);
-                return;
-            }
-            const [op, value] = newValue;
-            if (op === "array-contains") {
-                setFilterValue([op, mapArrayValueFactory(value)]);
-            } else if (op === "array-contains-any" && Array.isArray(value)) {
-                setFilterValue([op, value.map(mapArrayValueFactory)]);
-            } else {
-                setFilterValue(newValue);
-            }
-        };
 
         if (filterDataType === "string" || filterDataType === "number") {
             return <StringNumberFilterField value={filterValue}
-                                            setValue={setMapFilterValue}
+                                            setValue={setFilterValue}
                                             name={id as string}
                                             dataType={filterDataType}
                                             isArray={isArray}
@@ -809,7 +782,10 @@ function filterableProperty(property: ResolvedProperty, partOfArray = false): bo
 
 function resolveFilterKey(property: ResolvedProperty, key: string): string | undefined {
     if (property.dataType === "array" && property.of?.dataType === "map" && property.of.filterKey) {
-        return key;
+        if (property.of.filterKey.startsWith(`${key}.`)) {
+            return property.of.filterKey;
+        }
+        return `${key}.${property.of.filterKey}`;
     }
     if (property.dataType !== "map" || !property.filterKey) {
         return undefined;
