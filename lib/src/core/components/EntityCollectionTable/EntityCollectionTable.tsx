@@ -703,7 +703,7 @@ function createFilterField({
                                             setValue={setFilterValue}
                                             name={id as string}
                                             dataType={filterDataType}
-                                            isArray={false}
+                                            isArray={isArray}
                                             enumValues={enumValues}
                                             title={title}/>;
         } else if (filterDataType === "boolean") {
@@ -716,7 +716,7 @@ function createFilterField({
                                         setValue={setFilterValue}
                                         name={id as string}
                                         mode={filterProperty && filterProperty.dataType === "date" ? filterProperty.mode : undefined}
-                                        isArray={false}
+                                        isArray={isArray}
                                         title={title}/>;
         }
     } else if (baseProperty.dataType === "reference") {
