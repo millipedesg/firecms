@@ -763,6 +763,9 @@ function createFilterField({
 
 function filterableProperty(property: ResolvedProperty, partOfArray = false): boolean {
     if (partOfArray) {
+        if (property.dataType === "map") {
+            return Boolean(property.filterKey);
+        }
         return ["string", "number", "date", "reference"].includes(property.dataType);
     }
     if (property.dataType === "map") {
@@ -778,6 +781,12 @@ function filterableProperty(property: ResolvedProperty, partOfArray = false): bo
 }
 
 function resolveFilterKey(property: ResolvedProperty, key: string): string | undefined {
+    if (property.dataType === "array" && property.of?.dataType === "map" && property.of.filterKey) {
+        if (property.of.filterKey.startsWith(`${key}.`)) {
+            return property.of.filterKey;
+        }
+        return `${key}.${property.of.filterKey}`;
+    }
     if (property.dataType !== "map" || !property.filterKey) {
         return undefined;
     }
