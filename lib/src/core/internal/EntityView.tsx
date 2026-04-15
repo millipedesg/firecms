@@ -268,7 +268,7 @@ export function EntityView<M extends Record<string, any>, UserType extends User>
         closeAfterSave: boolean,
     }) => {
         setSaving(true);
-        saveEntityWithCallbacks({
+        return saveEntityWithCallbacks({
             path,
             entityId,
             values,
@@ -299,7 +299,7 @@ export function EntityView<M extends Record<string, any>, UserType extends User>
         if (autoSave) {
             setValuesToBeSaved(values);
         } else {
-            saveEntity({
+            return saveEntity({
                 collection,
                 path,
                 entityId,
