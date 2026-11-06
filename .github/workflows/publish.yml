@@ -8,6 +8,9 @@ permissions:
   contents: read
   packages: write
 
+env:
+  GOOGLE_ARTIFACT_REGISTRY_AUTH_VERSION: google-artifactregistry-auth@3.5.0
+
 defaults:
   run:
     working-directory: ./lib
@@ -32,6 +35,14 @@ jobs:
       - name: Pack release tarball
         run: npm pack
 
+      - name: Resolve package version
+        id: pkg
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          TARBALL="$(ls -1t millipedesg-firecms-*.tgz | head -1)"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tarball=${TARBALL}" >> "$GITHUB_OUTPUT"
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
@@ -44,10 +55,17 @@ jobs:
       - name: Publish tarball to dev AR
         run: |
           set -euo pipefail
+          VERSION='${{ steps.pkg.outputs.version }}'
+          TARBALL='${{ steps.pkg.outputs.tarball }}'
           chmod +x ../scripts/write-millipedesg-npmrc.sh
           NPMRC_PATH=../.npmrc ../scripts/write-millipedesg-npmrc.sh millipede-dev
-          npx -y google-artifactregistry-auth@3.5.0 --repo-config=../.npmrc --credential-config="$HOME/.npmrc"
-          npm publish "$(ls -1t millipedesg-firecms-*.tgz | head -1)"
+          npx -y ${{ env.GOOGLE_ARTIFACT_REGISTRY_AUTH_VERSION }} \
+            --repo-config=../.npmrc --credential-config="$HOME/.npmrc"
+          if npm view "@millipedesg/firecms@${VERSION}" version --userconfig="$HOME/.npmrc" &>/dev/null; then
+            echo "Skip dev AR: ${VERSION} already published"
+          else
+            npm publish "$TARBALL" --userconfig="$HOME/.npmrc"
+          fi
 
       - name: Authenticate (staging AR)
         uses: google-github-actions/auth@v2
@@ -58,9 +76,16 @@ jobs:
       - name: Publish tarball to staging AR
         run: |
           set -euo pipefail
+          VERSION='${{ steps.pkg.outputs.version }}'
+          TARBALL='${{ steps.pkg.outputs.tarball }}'
           NPMRC_PATH=../.npmrc ../scripts/write-millipedesg-npmrc.sh millipede-staging
-          npx -y google-artifactregistry-auth@3.5.0 --repo-config=../.npmrc --credential-config="$HOME/.npmrc"
-          npm publish "$(ls -1t millipedesg-firecms-*.tgz | head -1)"
+          npx -y ${{ env.GOOGLE_ARTIFACT_REGISTRY_AUTH_VERSION }} \
+            --repo-config=../.npmrc --credential-config="$HOME/.npmrc"
+          if npm view "@millipedesg/firecms@${VERSION}" version --userconfig="$HOME/.npmrc" &>/dev/null; then
+            echo "Skip staging AR: ${VERSION} already published"
+          else
+            npm publish "$TARBALL" --userconfig="$HOME/.npmrc"
+          fi
 
       - name: Authenticate (prod AR)
         uses: google-github-actions/auth@v2
@@ -71,19 +96,34 @@ jobs:
       - name: Publish tarball to prod AR
         run: |
           set -euo pipefail
+          VERSION='${{ steps.pkg.outputs.version }}'
+          TARBALL='${{ steps.pkg.outputs.tarball }}'
           NPMRC_PATH=../.npmrc ../scripts/write-millipedesg-npmrc.sh millipede-prod
-          npx -y google-artifactregistry-auth@3.5.0 --repo-config=../.npmrc --credential-config="$HOME/.npmrc"
-          npm publish "$(ls -1t millipedesg-firecms-*.tgz | head -1)"
+          npx -y ${{ env.GOOGLE_ARTIFACT_REGISTRY_AUTH_VERSION }} \
+            --repo-config=../.npmrc --credential-config="$HOME/.npmrc"
+          if npm view "@millipedesg/firecms@${VERSION}" version --userconfig="$HOME/.npmrc" &>/dev/null; then
+            echo "Skip prod AR: ${VERSION} already published"
+          else
+            npm publish "$TARBALL" --userconfig="$HOME/.npmrc"
+          fi
 
       - name: Dual-publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          TARBALL="$(ls -1t millipedesg-firecms-*.tgz | head -1)"
+          VERSION='${{ steps.pkg.outputs.version }}'
+          TARBALL='${{ steps.pkg.outputs.tarball }}'
+          rm -f ../.npmrc
           {
             echo "@millipedesg:registry=https://npm.pkg.github.com"
             echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
           } > .npmrc.gh
-          npm publish "$TARBALL" --userconfig .npmrc.gh --registry=https://npm.pkg.github.com
-          rm -f .npmrc.gh
+          if npm view "@millipedesg/firecms@${VERSION}" version --userconfig=.npmrc.gh &>/dev/null; then
+            echo "Skip GitHub Packages: ${VERSION} already published"
+          else
+            npm publish "$TARBALL" \
+              --userconfig .npmrc.gh \
+              --@millipedesg:registry=https://npm.pkg.github.com
+          fi
+          rm -f .npmrc.gh "$TARBALL"
