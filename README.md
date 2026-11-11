@@ -43,7 +43,7 @@ To install (from a consumer repo that already has `scripts/write-millipedesg-npm
 
 ```bash
 ./scripts/write-millipedesg-npmrc.sh millipede-dev   # or -staging / -prod
-npx google-artifactregistry-auth
+npx -y google-artifactregistry-auth@3.5.0
 npm install @millipedesg/firecms
 ```
 
