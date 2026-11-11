@@ -6,7 +6,6 @@ on:
 permissions:
   id-token: write
   contents: read
-  packages: write
 
 env:
   GOOGLE_ARTIFACT_REGISTRY_AUTH_VERSION: google-artifactregistry-auth@3.5.0
@@ -107,23 +106,6 @@ jobs:
             npm publish "$TARBALL" --userconfig="$HOME/.npmrc"
           fi
 
-      - name: Dual-publish to GitHub Packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          VERSION='${{ steps.pkg.outputs.version }}'
-          TARBALL='${{ steps.pkg.outputs.tarball }}'
-          rm -f ../.npmrc
-          {
-            echo "@millipedesg:registry=https://npm.pkg.github.com"
-            echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
-          } > .npmrc.gh
-          if npm view "@millipedesg/firecms@${VERSION}" version --userconfig=.npmrc.gh &>/dev/null; then
-            echo "Skip GitHub Packages: ${VERSION} already published"
-          else
-            npm publish "$TARBALL" \
-              --userconfig .npmrc.gh \
-              --@millipedesg:registry=https://npm.pkg.github.com
-          fi
-          rm -f .npmrc.gh "$TARBALL"
+      - name: Remove release tarball
+        if: always()
+        run: rm -f '${{ steps.pkg.outputs.tarball }}'

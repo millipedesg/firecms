@@ -37,18 +37,13 @@ This fork publishes a scoped package with additional map filter support.
 
 - Package: `@millipedesg/firecms`
 - Publish branch: `v2-millipede`
-- Registry: GitHub Packages
+- Registry: Google Artifact Registry (`millipedesg-npm` per GCP project; see ME-690)
 
-To install:
+To install (from a consumer repo that already has `scripts/write-millipedesg-npmrc.sh`):
 
-1) Add GitHub Packages auth (token needs `read:packages`):
-```
-@millipedesg:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
-```
-
-2) Install:
-```
+```bash
+./scripts/write-millipedesg-npmrc.sh millipede-dev   # or -staging / -prod
+npx -y google-artifactregistry-auth@3.5.0
 npm install @millipedesg/firecms
 ```
 
