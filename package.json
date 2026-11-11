@@ -19,5 +19,9 @@
         "build": "cd lib && yarn build",
         "release": "git push origin main:release"
     },
-    "packageManager": "yarn@3.2.3"
+    "packageManager": "yarn@3.2.3",
+    "resolutions": {
+        "undici": "^6.29.1",
+        "@grpc/grpc-js": "~1.13.6"
+    }
 }
