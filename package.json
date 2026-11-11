@@ -6,7 +6,6 @@
     "homepage": "https://firecms.co",
     "workspaces": [
         "lib",
-        "example",
         "example-client-project",
         "saas",
         "collection_editor",
@@ -14,14 +13,9 @@
         "data_enhancement"
     ],
     "scripts": {
-        "dev": "cd example && yarn dev",
         "saas": "cd saas && yarn dev",
-        "web": "cd website && yarn start",
-        "preview": "cd example && yarn preview",
         "deploy:saas": "cd saas && yarn deploy:staging",
         "deploy:saas:prod": "cd saas && yarn deploy:prod",
-        "deploy:demo": "cd example && yarn deploy",
-        "deploy:web": "cd website && yarn deploy",
         "build": "cd lib && yarn build",
         "release": "git push origin main:release"
     },
