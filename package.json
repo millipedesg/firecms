@@ -6,7 +6,6 @@
     "homepage": "https://firecms.co",
     "workspaces": [
         "lib",
-        "example",
         "example-client-project",
         "saas",
         "collection_editor",
@@ -14,16 +13,15 @@
         "data_enhancement"
     ],
     "scripts": {
-        "dev": "cd example && yarn dev",
         "saas": "cd saas && yarn dev",
-        "web": "cd website && yarn start",
-        "preview": "cd example && yarn preview",
         "deploy:saas": "cd saas && yarn deploy:staging",
         "deploy:saas:prod": "cd saas && yarn deploy:prod",
-        "deploy:demo": "cd example && yarn deploy",
-        "deploy:web": "cd website && yarn deploy",
         "build": "cd lib && yarn build",
         "release": "git push origin main:release"
     },
-    "packageManager": "yarn@3.2.3"
+    "packageManager": "yarn@3.2.3",
+    "resolutions": {
+        "undici": "^6.29.1",
+        "@grpc/grpc-js": "~1.13.6"
+    }
 }
