@@ -115,7 +115,7 @@
         "npm-run-all": "^4.1.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-router": "^6.30.4",
+        "react-router": "^8.5.1",
         "react-router-dom": "^6.30.4",
         "ts-jest": "^29.1.0",
         "tsd": "^0.28.1",

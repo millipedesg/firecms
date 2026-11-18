@@ -2061,7 +2061,7 @@ __metadata:
     react-fast-compare: ^3.2.2
     react-image-file-resizer: ^0.4.8
     react-markdown-editor-lite: ^1.4.2
-    react-router: ^6.30.4
+    react-router: ^7.18.2
     react-router-dom: ^6.30.4
     react-transition-group: ^4.4.5
     react-use-measure: ^2.1.1
@@ -3824,6 +3824,13 @@ __metadata:
   version: 2.0.0
   resolution: "convert-source-map@npm:2.0.0"
   checksum: 63ae9933be5a2b8d4509daca5124e20c14d023c820258e484e32dc324d34c2754e71297c94a05784064ad27615037ef677e3f0c00469fb55f409d2bb21261035
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^1.0.1":
+  version: 1.1.1
+  resolution: "cookie@npm:1.1.1"
+  checksum: e40c4ff817a73ec0a41413654ca9a71e6207bd6e511151bb1d307aef2903eb59771127a85474afe0e12a8982804f7b03cce0bda798b55c306aca9608b4b9acab
   languageName: node
   linkType: hard
 
@@ -7368,7 +7375,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:6.30.6, react-router@npm:^6.30.4":
+"react-router@npm:6.30.6":
   version: 6.30.6
   resolution: "react-router@npm:6.30.6"
   dependencies:
@@ -7376,6 +7383,22 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 72bd5caaa4dba7f9e5c88d7abd583614eecd46eff11b2a9f21bd3baf6af1dfeb469416f23fa8ea032b70a298fbe170fde3c8d93b422f13dd17a4cc92a7af9e2a
+  languageName: node
+  linkType: hard
+
+"react-router@npm:^7.18.2":
+  version: 7.18.2
+  resolution: "react-router@npm:7.18.2"
+  dependencies:
+    cookie: ^1.0.1
+    set-cookie-parser: ^2.6.0
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 945d24fd3ec7f113f384fde00463fd75b7f1cf5bf76fc2cd1f46cfc2c5610516c538ec55f9294d11a72988179949ed1b8470e4b2571d4b7031016f83c55f51cc
   languageName: node
   linkType: hard
 
@@ -7768,6 +7791,13 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 75ae9d5d6a23220fd7e188bee5a15c2126ab0466bec53352a59c4debbb07cad7169af60eb8a2fca7998ae0e3c55951d086cc3dd3a05aaa278aa863f486ad9bb7
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.3
+  resolution: "set-cookie-parser@npm:2.7.3"
+  checksum: 89515a0eb1894727dc89002d6e66683d7d6006b4f9b89e00d1ea0e19c68f1e9b28ed3effca4d71cad6f2101bd0da57156515c9fa81845a71bf6d01891ac181e7
   languageName: node
   linkType: hard
 
